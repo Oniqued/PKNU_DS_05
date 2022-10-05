@@ -1,8 +1,10 @@
+//테스트 결과 데이터 출력 성공
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRT_NONSTDC_NO_WARNINGS
 #include <stdio.h>
 #define SIZE 19
 
+//사용될 함수
 void load();
 void judge();
 bool horizon();
@@ -10,13 +12,14 @@ bool vertical();
 bool diagonal();
 void winner(int stone);
 
+//사용될 전역 변수
 int N;
 int board[SIZE][SIZE];
 
 int main() {
 	load();
 
-	//우승 조건 체크
+	//우승 조건 체크 (셋다 아니면 not finished 출력)
 	if (vertical() == false &&
 		horizon() == false &&
 		diagonal() == false) {
@@ -52,14 +55,28 @@ void load() {
 
 //같은 수가 대각선으로 나열되는 경우
 bool diagonal() {
-	int count;
+	int count; //같은 돌이 나온 횟수 체크 
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			count = 1;
-			if (board[i][j] == 0) continue;
+			count = 1; 
+			if (board[i][j] == 0) continue; //0인 경우 건너뜀
 			for (int k = 1; k < 5; k++) {
+				// '/' 방향 대각선 같은 돌 체크
 				if (board[i][j] == board[i + k][j - k]) {
 					count++;
+					//연속해서 5개가 놓이면
+					if (count == 5) {
+						winner(board[i][j]);
+						return true;
+					}
+				}
+			}
+			count = 1;
+			for (int k = 1; k < 5; k++) {
+				// 반대 대각선 같은 돌 체크
+				if (board[i][j] == board[i - k][j + k]) {
+					count++;
+					//연속해서 5개가 놓이면
 					if (count == 5) {
 						winner(board[i][j]);
 						return true;
