@@ -7,6 +7,7 @@ void load();
 void judge();
 bool horizon();
 bool vertical();
+bool diagonal();
 void winner(int stone);
 
 int N;
@@ -14,9 +15,11 @@ int board[SIZE][SIZE];
 
 int main() {
 	load();
+
 	//우승 조건 체크
 	if (vertical() == false &&
-		horizon() == false) {
+		horizon() == false &&
+		diagonal() == false) {
 		printf("Not Finished\n");
 	}
 
@@ -43,19 +46,29 @@ void load() {
 //승패 판단
 /*
 *	1. 같은 수가 대각선 방향으로 연속해서 5개가 놓인다
-*	2. 같은 수가 수평으로 연속해서 5개가 나열된다 
+*	2. 같은 수가 수평으로 연속해서 5개가 나열된다
 *	3. 같은 수가 수직으로 연속해서 5개가 나열된다
 */
 
 //같은 수가 대각선으로 나열되는 경우
 bool diagonal() {
 	int count;
-	for (int i = N-1; i >= 0; i--) {
-		count = 1;
+	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			
+			count = 1;
+			if (board[i][j] == 0) continue;
+			for (int k = 1; k < 5; k++) {
+				if (board[i][j] == board[i + k][j - k]) {
+					count++;
+					if (count == 5) {
+						winner(board[i][j]);
+						return true;
+					}
+				}
+			}
 		}
 	}
+	return false;
 }
 
 //같은 수가 수평으로 나열되는 경우
@@ -83,7 +96,7 @@ bool vertical() {
 	for (int i = 0; i < N; i++) {
 		count = 1;
 		for (int j = 0; j < N; j++) {
-			if ((board[j][i] == board[j+1][i]) && (board[j][i] != 0)) {
+			if ((board[j][i] == board[j + 1][i]) && (board[j][i] != 0)) {
 				count++;
 				//연속해서 5개가 놓이면
 				if (count == 5) {
