@@ -28,6 +28,9 @@ void load() {
 		printf("ERROR! FAILED TO OPEN FILE\n");
 		return;
 	}
+	else {
+		printf("OPEN sample.html...\n");
+	}
 	int i = 0; //줄의 번호 저장
 	while (fgets(buffer, BUFFER_SIZE, file) != NULL) {
 		//문장 끝에있는 개행 제거
@@ -48,6 +51,13 @@ void load() {
 //파일 저장
 void save() {
 	FILE* file = fopen("sample.txt", "w");
+	if (file == NULL) {
+		printf("FAILED TO WRITE FILE\n");
+		return;
+	}
+	else {
+		printf("SUCCESSED TO SAVE FILE (with sample.txt)\n");
+	}
 	
 	for (int i = 0; content[i] != NULL; i++) {
 		fprintf(file, "%s\n", content[i]);
@@ -61,7 +71,7 @@ void filter(char buffer[]) {
 	int i = 0;
 	int j = 0;
 	char tmp[BUFFER_SIZE];
-	while (buffer[i] != NULL) {
+	while (buffer[i] != '\0') {
 		//Tag 시작 부분
 		if (buffer[i] == '<') { 
 			//Tag의 끝부분이 나올때 까지 i++
@@ -75,6 +85,6 @@ void filter(char buffer[]) {
 		//Tag를 자른 순수 문자 하나씩 tmp[0]부터 저장
 		tmp[j++] = buffer[i++];
 	}
-	tmp[j] = NULL; //끝에 NULL CHAR 추가
+	tmp[j] = '\0'; //끝에 NULL CHAR 추가
 	strcpy(buffer, tmp); //buffer에 tmp 덮어쓰기
 }
