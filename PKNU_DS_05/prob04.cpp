@@ -1,27 +1,29 @@
+//테스트 결과 데이터 출력 성공
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRT_NONSTDC_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 #define BUFFER_SIZE 256
 
+//사용될 함수
 void load();
+void save();
 void filter(char buffer[]);
 
+//사용될 전역 변수 
 char buffer[BUFFER_SIZE];
 char* content[BUFFER_SIZE];
 
 int main() {
-
 	load();
-	//for (int i = 0; content[i] != NULL; i++) {
-	//	printf("%s\n", content[i]);
-	//}
+	save();
 
 	return 0;
 }
 
+//파일 읽고 필터링 한 내용을 content에 저장
 void load() {
-	FILE* file = fopen("sample.txt", "r");
+	FILE* file = fopen("sample.html", "r");
 	if (file == NULL) {
 		printf("ERROR! FAILED TO OPEN FILE\n");
 		return;
@@ -36,29 +38,43 @@ void load() {
 		}
 		//Tag를 제거
 		filter(buffer);
-		break;
 		//Tag를 제거한 한 줄
 		content[i] = strdup(buffer);
 		i++;
 	}
+	fclose(file);
 }
 
+//파일 저장
+void save() {
+	FILE* file = fopen("sample.txt", "w");
+	
+	for (int i = 0; content[i] != NULL; i++) {
+		fprintf(file, "%s\n", content[i]);
+	}
+
+	fclose(file);
+}
+
+//Tag 자르기 
 void filter(char buffer[]) {
 	int i = 0;
 	int j = 0;
 	char tmp[BUFFER_SIZE];
 	while (buffer[i] != NULL) {
-		if (buffer[i] == '<') {
+		//Tag 시작 부분
+		if (buffer[i] == '<') { 
 			//Tag의 끝부분이 나올때 까지 i++
 			while (buffer[i] != '>') {
-				printf("%d ", i);
 				i++;
 			}
+			i++; //'>'부분 건너뛰기
+			//다음 문자가 Tag시작이면 다시 위 과정 반복
+			if (buffer[i] == '<') continue;
 		}
-		tmp[j] = buffer[i];
-		j++;
+		//Tag를 자른 순수 문자 하나씩 tmp[0]부터 저장
+		tmp[j++] = buffer[i++];
 	}
-	tmp[j] = NULL;
-	strcpy(buffer, tmp);
-	printf("%s", buffer);
+	tmp[j] = NULL; //끝에 NULL CHAR 추가
+	strcpy(buffer, tmp); //buffer에 tmp 덮어쓰기
 }
